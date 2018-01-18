@@ -4,10 +4,8 @@
 from unittest import TestCase, main
 
 
-class Test_(TestCase):
-
-    def test_(self):
-        pass
+class TestNumber(TestCase):
+    pass
 
 
 if __name__ == "__main__":
