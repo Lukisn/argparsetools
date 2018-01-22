@@ -4,6 +4,10 @@
 from unittest import TestCase, main
 
 
+class TestPositiveNumber(TestCase):
+    pass
+
+
 class TestNumber(TestCase):
     pass
 
