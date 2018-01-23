@@ -9,7 +9,7 @@ from functools import partial
 
 
 # Numeric =====================================================================
-def positive_number(string, strict=True):
+def positive(string, strict=True):
     try:
         num = float(string)
     except ValueError:
@@ -26,7 +26,15 @@ def positive_number(string, strict=True):
     return num
 
 
-def negative_number(string, strict=True):
+def strictly_positive():
+    return partial(positive, strict=True)
+
+
+def loosely_positive():
+    return partial(positive, strict=False)
+
+
+def negative(string, strict=True):
     try:
         num = float(string)
     except ValueError:
@@ -43,7 +51,17 @@ def negative_number(string, strict=True):
     return num
 
 
-def ranged_number(string, minimum=float("-inf"), maximum=float("inf")):
+def strictly_negative():
+    return partial(negative, strict=True)
+
+
+def loosely_negative():
+    return partial(negative, strict=False)
+
+
+# TODO: incorporate inclusion and exclusion of minimum and maximum values
+def interval(string, minimum=float("-inf"), maximum=float("inf"),
+             include_minimum=True, include_maximum=True):
     try:
         num = float(string)
     except ValueError:
@@ -59,18 +77,18 @@ def ranged_number(string, minimum=float("-inf"), maximum=float("inf")):
 
 
 def at_least(minimum):
-    return partial(ranged_number, minimum=minimum)
+    return partial(interval, minimum=minimum)
 
 
 def at_most(maximum):
-    return partial(ranged_number, maximum=maximum)
+    return partial(interval, maximum=maximum)
 
 
 def in_range(minimum, maximum):
-    return partial(ranged_number, minimum=minimum, maximum=maximum)
+    return partial(interval, minimum=minimum, maximum=maximum)
 
 
-def odd_number(string):
+def odd(string):
     try:
         num = int(string)
     except ValueError:
@@ -82,7 +100,7 @@ def odd_number(string):
     return num
 
 
-def even_number(string):
+def even(string):
     try:
         num = int(string)
     except ValueError:
@@ -90,6 +108,8 @@ def even_number(string):
         raise ArgumentTypeError(msg)
     if num % 2:
         msg = f"'{string}' is not an even number"
+        raise ArgumentTypeError(msg)
+    return num
 
 
 def divisible_by(string, divisor):
@@ -102,6 +122,10 @@ def divisible_by(string, divisor):
 
 
 def multiple_of(string, multiplier):
+    raise NotImplementedError
+
+
+def power_of(string, base):
     raise NotImplementedError
 
 

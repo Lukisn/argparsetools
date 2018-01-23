@@ -2,13 +2,18 @@
 # -*- coding: utf-8 -*-
 
 from argparse import ArgumentParser
-from argparsetools.types import positive_number, odd_number
+from functools import partial
+from argparsetools.types import positive, odd
 
 
 def parse_arguments(argv=None):
     parser = ArgumentParser()
-    parser.add_argument("positional", type=positive_number)
-    parser.add_argument("-o", "--optional", type=odd_number)
+    # mandatory:
+    # parser.add_argument("positional")
+    # optional:
+    parser.add_argument("--default-positive", type=positive)  # default: strict=True
+    parser.add_argument("--strict-positive", type=partial(positive, strict=True))
+    parser.add_argument("--lenient-positive", type=partial(positive, strict=False))
     args = parser.parse_args(args=argv)
     # check parsed namespace here if needed
     return args
