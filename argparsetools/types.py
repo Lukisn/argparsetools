@@ -117,15 +117,31 @@ def divisible_by(string, divisor):
         num = int(string)
     except ValueError:
         msg = f"'{string}' is not a valid integer"
-        raise ArgumentTypeError
-    raise NotImplementedError
+        raise ArgumentTypeError(msg)
+    if num % divisor:
+        msg = f"'{string}' is not divisible by {divisor}"
+        raise ArgumentTypeError(msg)
+    return num
 
 
-def multiple_of(string, multiplier):
-    raise NotImplementedError
+def divisor_of(string, quantity):
+    try:
+        num = int(string)
+    except ValueError:
+        msg = f"'{string}' is not a valid integer"
+        raise ArgumentTypeError(msg)
+    if quantity % num:
+        msg = f"'{string}' is not a divisor of {quantity}"
+        raise ArgumentTypeError(msg)
+    return num
 
 
 def power_of(string, base):
+    try:
+        num = int(string)
+    except ValueError:
+        msg = f"'{string}' is not a valid integer"
+        raise ArgumentTypeError(msg)
     raise NotImplementedError
 
 
