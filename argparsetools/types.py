@@ -5,10 +5,68 @@ the add_argument method.
 """
 
 from argparse import ArgumentTypeError
+from decimal import Decimal, InvalidOperation
+from fractions import Fraction
 from functools import partial
+from math import isinf, isnan
 
 
 # Numeric =====================================================================
+def integer(string):
+    try:
+        num = float(string)
+    except ValueError:
+        msg = f"'{string}' is not a valid number"
+        raise ArgumentTypeError(msg)
+    if not num.is_integer():
+        msg = f"'{string}' is not a valid integer number"
+        raise ArgumentTypeError(msg)
+    num = int(num)
+    return num
+
+
+def floating_point(string, allow_nan=True, allow_inf=True):
+    try:
+        num = float(string)
+    except ValueError:
+        msg = f"'{string}' is not a valid floating point number"
+        raise ArgumentTypeError(msg)
+    if not allow_nan and isnan(num):
+        msg = ""
+        raise ArgumentTypeError(msg)
+    if not allow_inf and isinf(num):
+        msg = ""
+        raise ArgumentTypeError(msg)
+    return num
+
+
+def complex_number(string):
+    try:
+        num = complex(string)
+    except ValueError:
+        msg = f"'{string}' is not a valid complex number"
+        raise ArgumentTypeError(msg)
+    return num
+
+
+def fraction(string):
+    try:
+        num = Fraction(string)
+    except ValueError:
+        msg = f"'{string}' is not a valid fraction number"
+        raise ArgumentTypeError(msg)
+    return num
+
+
+def decimal(string):
+    try:
+        num = Decimal(string)
+    except InvalidOperation:
+        msg = f"'{string}' is not a valid decimal number"
+        raise ArgumentTypeError(msg)
+    return num
+
+
 def positive(string, strict=True):
     try:
         num = float(string)
@@ -143,6 +201,14 @@ def power_of(string, base):
         msg = f"'{string}' is not a valid integer"
         raise ArgumentTypeError(msg)
     raise NotImplementedError
+
+
+def prime(string):
+    try:
+        num = int(string)
+    except ValueError:
+        msg = f"'{string}' is not a valid integer"
+        raise ArgumentTypeError(msg)
 
 
 # Strings =====================================================================
