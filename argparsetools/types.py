@@ -5,14 +5,19 @@ the add_argument method.
 """
 
 from argparse import ArgumentTypeError
-from decimal import Decimal, InvalidOperation
-from fractions import Fraction
 from functools import partial
 from math import isinf, isnan
 
 
 # Numeric =====================================================================
 def integer(string):
+    """Check if the input string is an integer valued number.
+
+    :param string: input string to check
+    :type string: str
+    :return: checked integer number
+    :rtype: int
+    """
     try:
         num = float(string)
     except ValueError:
@@ -26,6 +31,19 @@ def integer(string):
 
 
 def floating_point(string, allow_nan=True, allow_inf=True):
+    """Check if the input string is a floating point number.
+
+    :param string: input string to check
+    :type string: str
+    :param allow_nan: option for allowing Not-a-Number (NaN) values (default:
+        ``True``)
+    :type allow_nan: bool
+    :param allow_inf: option for allowing positive and negative infinity values
+        (default: ``True``)
+    :type allow_inf: bool
+    :return: checked floating point number
+    :rtype: float
+    """
     try:
         num = float(string)
     except ValueError:
@@ -36,33 +54,6 @@ def floating_point(string, allow_nan=True, allow_inf=True):
         raise ArgumentTypeError(msg)
     if not allow_inf and isinf(num):
         msg = ""
-        raise ArgumentTypeError(msg)
-    return num
-
-
-def complex_number(string):
-    try:
-        num = complex(string)
-    except ValueError:
-        msg = f"'{string}' is not a valid complex number"
-        raise ArgumentTypeError(msg)
-    return num
-
-
-def fraction(string):
-    try:
-        num = Fraction(string)
-    except ValueError:
-        msg = f"'{string}' is not a valid fraction number"
-        raise ArgumentTypeError(msg)
-    return num
-
-
-def decimal(string):
-    try:
-        num = Decimal(string)
-    except InvalidOperation:
-        msg = f"'{string}' is not a valid decimal number"
         raise ArgumentTypeError(msg)
     return num
 

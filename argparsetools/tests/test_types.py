@@ -2,90 +2,71 @@
 # -*- coding: utf-8 -*-
 
 from argparse import ArgumentTypeError
-from math import isnan
 from unittest import TestCase, main
 
-from hypothesis import given
-from hypothesis.strategies import integers, floats, complex_numbers, text
-
-from argparsetools.types import integer, floating_point, complex_number,\
-    fraction, decimal
-
-
-def notnan(x):
-    if isnan(x):
-        return False
-    return True
-
-
-def notzero(x):
-    if x == 0:
-        return False
-    return True
+from argparsetools.types import integer, floating_point
 
 
 class TestInteger(TestCase):
 
-    @given(integers())
-    def test_integer_passes(self, i):
-        self.assertIsInstance(integer(str(i)), int)
+    def setUp(self):
+        self.valid_ints = [
+            "-123", "-1", "-001", "-0", "0", "001", "1", "123",
+            "-1.23e300", "-1.0", "-0.0", "0.0", "1.0", "123.0", "1.23e300"]
+        self.floats = [
+            "-1.23e-300", "-1.1", "1.1", "1.23e-300",
+            "nan", "NaN" "-inf", "inf", "+inf"]
+        self.texts = ["", " ", "abc123", "None", "False", "True", "123.4.5"]
 
-    @given(floats())
-    def test_float_fails(self, f):
-        with self.assertRaises(ArgumentTypeError):
-            integer(f)
+    def test_integers_pass(self):
+        for i in self.valid_ints:
+            self.assertIsInstance(integer(i), int)
 
-    @given(text())
-    def test_text_fails(self, t):
-        with self.assertRaises(ArgumentTypeError):
-            integer(t)
+    def test_floats_fail(self):
+        for f in self.floats:
+            with self.assertRaises(ArgumentTypeError):
+                integer(f)
+
+    def test_texts_fail(self):
+        for t in self.texts:
+            with self.assertRaises(ArgumentTypeError):
+                integer(t)
 
 
 class TestFloatingPoint(TestCase):
 
-    @given(integers())
-    def test_integer_passes(self, i):
-        floating_point(str(i))
+    def setUp(self):
+        self.valid_ints = [
+            "-123", "-1", "-001", "-0", "0", "001", "1", "123",
+            "-1.23e300", "-1.0", "-0.0", "0.0", "1.0", "123.0", "1.23e300"]
+        self.normal_floats = ["-1.23e-300", "-1.1", "1.1", "1.23e-300"]
+        self.special_floats = ["nan", "-inf", "inf", "+inf"]
+        self.texts = ["", " ", "abc123", "None", "False", "True", "123.4.5"]
 
-    @given(floats().filter(lambda f: not isnan(f)))
-    def test_floating_point_passes(self, f):
-        floating_point(str(f))
+    def test_integers_pass(self):
+        for i in self.valid_ints:
+            self.assertIsInstance(
+                floating_point(i, allow_nan=True, allow_inf=True), float)
 
+    def test_floating_points_pass(self):
+        for f in self.normal_floats:
+            self.assertIsInstance(
+                floating_point(f, allow_nan=True, allow_inf=True), float)
 
-class TestComplexNumber(TestCase):
+    def test_special_floats_pass(self):
+        for f in self.special_floats:
+            self.assertIsInstance(
+                floating_point(f, allow_nan=True, allow_inf=True), float)
 
-    @given(complex_numbers())
-    def test_complex_passes(self, c):
-        self.assertEqual(c, complex_number(str(c)))
+    def test_special_floats_fail(self):
+        for f in self.normal_floats:
+            self.assertIsInstance(
+                floating_point(f, allow_nan=False, allow_inf=False), float)
 
-
-class TestFraction(TestCase):
-
-    @given(integers(),
-           integers().filter(notzero).filter(lambda x: x > 0))
-    def test_integer_passes(self, i, j):
-        fraction(f"{i}/{j}")
-
-    @given(floats().filter(notnan),
-           floats().filter(notnan).filter(lambda x: x > 0))
-    def test_floating_point_passes(self, f, g):
-        fraction(f"{f}/{g}")
-
-
-class TestDecimal(TestCase):
-
-    @given(integers())
-    def test_integer_passes(self, i):
-        decimal(str(i))
-
-    @given(floats().filter(lambda f: not isnan(f)))
-    def test_floating_point_passes(self, f):
-        decimal(str(f))
-
-    @given(text())
-    def test_string_fails(self, t):
-        with self.assertRaises(ArgumentTypeError):
-            decimal(t)
+    def test_texts_fail(self):
+        for t in self.texts:
+            with self.assertRaises(ArgumentTypeError):
+                floating_point(t, allow_nan=True, allow_inf=True)
 
 
 if __name__ == "__main__":
