@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""Unit test cases for numeric types."""
 
 from argparse import ArgumentTypeError
 from unittest import TestCase, main
 
-from argparsetools.types import integer, floating_point
+from argparsetools.types.numeric import integer, floating_point
 
 
 class TestInteger(TestCase):

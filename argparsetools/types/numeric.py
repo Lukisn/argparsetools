@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Type checking functions for use with arparse's type keyword argument to
-the add_argument method.
-"""
+"""Type checking functions for numeric types for use with arparse."""
 
 from argparse import ArgumentTypeError
 from functools import partial
 from math import isinf, isnan
 
 
-# Numeric =====================================================================
 def integer(string):
     """Check if the input string is an integer valued number.
 
@@ -192,6 +189,7 @@ def power_of(string, base):
         msg = f"'{string}' is not a valid integer"
         raise ArgumentTypeError(msg)
     raise NotImplementedError
+    return num
 
 
 def prime(string):
@@ -200,10 +198,5 @@ def prime(string):
     except ValueError:
         msg = f"'{string}' is not a valid integer"
         raise ArgumentTypeError(msg)
-
-
-# Strings =====================================================================
-
-
-# Filesystem ==================================================================
-
+    raise NotImplementedError
+    return num
