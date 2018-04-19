@@ -27,16 +27,16 @@ def integer(string):
     return num
 
 
-def floating_point(string, allow_nan=True, allow_inf=True):
+def floating(string, allow_nan=False, allow_inf=False):
     """Check if the input string is a floating point number.
 
     :param string: input string to check
     :type string: str
     :param allow_nan: option for allowing Not-a-Number (NaN) values (default:
-        ``True``)
+        ``False``)
     :type allow_nan: bool
     :param allow_inf: option for allowing positive and negative infinity values
-        (default: ``True``)
+        (default: ``False``)
     :type allow_inf: bool
     :return: checked floating point number
     :rtype: float
@@ -55,7 +55,16 @@ def floating_point(string, allow_nan=True, allow_inf=True):
     return num
 
 
-def positive(string, strict=True):
+def positive(string, strict=False):
+    """Check if the input string is a positive floating point number.`
+
+    :param string: input string to check
+    :type string: str
+    :param strict: option for checking positivity strictly (default: ``False`)
+    :type strict: bool
+    :return: checked floating point number
+    :rtype: float
+    """
     try:
         num = float(string)
     except ValueError:
@@ -73,14 +82,21 @@ def positive(string, strict=True):
 
 
 def strictly_positive():
+    """Check if the input string is a strictly positive floating point number.
+
+    :return: positive function with ``strict`` option set to ``True``
+    :rtype: function
+    """
     return partial(positive, strict=True)
 
 
-def loosely_positive():
-    return partial(positive, strict=False)
+def negative(string, strict=False):
+    """Check if the input string is a negative floating point number.
 
-
-def negative(string, strict=True):
+    :param string:
+    :param strict:
+    :return:
+    """
     try:
         num = float(string)
     except ValueError:
@@ -98,28 +114,55 @@ def negative(string, strict=True):
 
 
 def strictly_negative():
+    """Check if the input string is a strictly negative floating point number.
+
+    :return: negative function with ``strict`` option set to ``True``.
+    :rtype: function
+    """
     return partial(negative, strict=True)
 
 
-def loosely_negative():
-    return partial(negative, strict=False)
+def interval(string, min=float("-inf"), max=float("inf"),
+             include_min=True, include_max=True):
+    """Check that the input string is in the interval.
 
+    The default interval is the closed interval from negative to positive
+    infinity.
 
-# TODO: incorporate inclusion and exclusion of minimum and maximum values
-def interval(string, minimum=float("-inf"), maximum=float("inf"),
-             include_minimum=True, include_maximum=True):
+    :param string:
+    :param min:
+    :param max:
+    :param include_min:
+    :param include_max:
+    :return:
+    """
     try:
         num = float(string)
     except ValueError:
         msg = f"'{string}' is not a valid number"
         raise ArgumentTypeError(msg)
-    if num < minimum:
-        msg = f"Number '{string}' is less than minimum {minimum}"
-        raise ArgumentTypeError(msg)
-    if num > maximum:
-        msg = f"Number '{string}' is greater than maximum {maximum}"
-        raise ArgumentTypeError(msg)
+    if include_min:
+        if num < min:
+            msg = f"Number '{string}' is < the inclusive minimum {min}"
+            raise ArgumentTypeError(msg)
+    else:  # not include_minimum -> exclude minimum
+        if num <= min:
+            msg = f"Number '{string}' is <= to the  exclusive minimum {min}"
+            raise ArgumentTypeError(msg)
+    if include_max:
+        if num > max:
+            msg = f"Number '{string}' is > the inclusive maximum {max}"
+            raise ArgumentTypeError(msg)
+    else:  # not include_maximum -> exclude maximum
+        if num >= max:
+            msg = f"Number '{string}' is >= the exclusive maximum {max}"
+            raise ArgumentTypeError(msg)
     return num
+
+
+def open_interval(minimum, maximum):
+    return partial(interval, min=minimum, max=maximum,
+                   include_min=False, include_max=False)
 
 
 def at_least(minimum):
